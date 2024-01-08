@@ -270,7 +270,7 @@ class _RecordButtonState extends State<RecordButton> {
                       decoration: TextDecoration.none,
                     )),
               ),
-              GestureDetector(
+              InkWell(
                 //behavior: HitTestBehavior.opaque,
                 onTap: () async {
                   Vibrate.feedback(FeedbackType.success);
