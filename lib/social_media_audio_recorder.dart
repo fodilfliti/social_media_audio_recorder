@@ -270,8 +270,8 @@ class _RecordButtonState extends State<RecordButton> {
                       decoration: TextDecoration.none,
                     )),
               ),
-              InkWell(
-                //behavior: HitTestBehavior.opaque,
+              GestureDetector(
+                behavior: HitTestBehavior.translucent,
                 onTap: () async {
                   Vibrate.feedback(FeedbackType.success);
                   timer?.cancel();
@@ -295,8 +295,8 @@ class _RecordButtonState extends State<RecordButton> {
                   ),
                 ),
               ),
-              InkWell(
-                // behavior: HitTestBehavior.opaque,
+              GestureDetector(
+                behavior: HitTestBehavior.translucent,
                 onTap: () async {
                   log("Cancelled recording");
                   Vibrate.feedback(FeedbackType.heavy);
