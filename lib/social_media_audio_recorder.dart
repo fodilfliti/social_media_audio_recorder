@@ -287,11 +287,13 @@ class _RecordButtonState extends State<RecordButton> {
                     widget.onRecordEnd(filePath!);
                   });
                 },
-                child: const Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.check,
-                    size: 18,
-                    color: Colors.green,
+                child: const AbsorbPointer(
+                  child: Center(
+                    child: FaIcon(
+                      FontAwesomeIcons.check,
+                      size: 18,
+                      color: Colors.green,
+                    ),
                   ),
                 ),
               ),
