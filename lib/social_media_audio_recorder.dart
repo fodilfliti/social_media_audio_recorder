@@ -270,6 +270,31 @@ class _RecordButtonState extends State<RecordButton> {
                       decoration: TextDecoration.none,
                     )),
               ),
+              GestureDetector(
+                //behavior: HitTestBehavior.opaque,
+                onTap: () async {
+                  Vibrate.feedback(FeedbackType.success);
+                  timer?.cancel();
+                  timer = null;
+                  startTime = null;
+                  recordDuration = "00:00";
+
+                  var filePath = await Record().stop(); //Record file
+
+                  setState(() {
+                    isLocked = false;
+
+                    widget.onRecordEnd(filePath!);
+                  });
+                },
+                child: const Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.check,
+                    size: 18,
+                    color: Colors.green,
+                  ),
+                ),
+              ),
               InkWell(
                 // behavior: HitTestBehavior.opaque,
                 onTap: () async {
@@ -300,31 +325,6 @@ class _RecordButtonState extends State<RecordButton> {
                   FontAwesomeIcons.xmark,
                   size: 18,
                   color: Colors.red,
-                ),
-              ),
-              GestureDetector(
-                //behavior: HitTestBehavior.opaque,
-                onTap: () async {
-                  Vibrate.feedback(FeedbackType.success);
-                  timer?.cancel();
-                  timer = null;
-                  startTime = null;
-                  recordDuration = "00:00";
-
-                  var filePath = await Record().stop(); //Record file
-
-                  setState(() {
-                    isLocked = false;
-
-                    widget.onRecordEnd(filePath!);
-                  });
-                },
-                child: const Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.check,
-                    size: 18,
-                    color: Colors.green,
-                  ),
                 ),
               ),
             ],
