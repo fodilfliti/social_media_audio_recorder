@@ -238,99 +238,97 @@ class _RecordButtonState extends State<RecordButton> {
   }
 
   Widget timerLocked() {
-    return Positioned(
-      right: 0,
-      child: Container(
-        height: widget.size!,
-        width: timerWidth,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(
-              widget.radius == null ? 10 : widget.radius!),
-          color: widget.color,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Text(recordDuration,
+    return Container(
+      height: widget.size!,
+      width: timerWidth,
+      decoration: BoxDecoration(
+        borderRadius:
+            BorderRadius.circular(widget.radius == null ? 10 : widget.radius!),
+        color: widget.color,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 20, right: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () async {
+                log("Cancelled recording");
+                Vibrate.feedback(FeedbackType.heavy);
+
+                timer?.cancel();
+                timer = null;
+                startTime = null;
+                recordDuration = "00:00";
+                setState(() {
+                  isLocked = false;
+                  showLottie = true;
+                });
+                widget.onCancelRecord();
+
+                Timer(const Duration(milliseconds: 1440), () async {
+                  widget.controller.reverse();
+                  debugPrint("Cancelled recording");
+                  var filePath = await record!.stop();
+
+                  File(filePath!).delete();
+
+                  showLottie = false;
+                });
+              },
+              child: const FaIcon(
+                FontAwesomeIcons.xmark,
+                size: 18,
+                color: Colors.red,
+              ),
+            ),
+            Text(recordDuration,
+                style: TextStyle(
+                  color: widget.allTextColor ?? Colors.black,
+                  fontSize: widget.fontSize,
+                  decoration: TextDecoration.none,
+                )),
+            FlowShader(
+              duration: const Duration(seconds: 3),
+              flowColors: [widget.arrowColor ?? Colors.white, Colors.grey],
+              child: Text(widget.stopText ?? "Tap to stop or ",
                   style: TextStyle(
                     color: widget.allTextColor ?? Colors.black,
                     fontSize: widget.fontSize,
                     decoration: TextDecoration.none,
                   )),
-              FlowShader(
-                duration: const Duration(seconds: 3),
-                flowColors: [widget.arrowColor ?? Colors.white, Colors.grey],
-                child: Text(widget.stopText ?? "Tap to stop or ",
-                    style: TextStyle(
-                      color: widget.allTextColor ?? Colors.black,
-                      fontSize: widget.fontSize,
-                      decoration: TextDecoration.none,
-                    )),
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () async {
-                  Vibrate.feedback(FeedbackType.success);
-                  timer?.cancel();
-                  timer = null;
-                  startTime = null;
-                  recordDuration = "00:00";
+            ),
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () async {
+                log("check recording");
+                Vibrate.feedback(FeedbackType.success);
+                timer?.cancel();
+                timer = null;
+                startTime = null;
+                recordDuration = "00:00";
 
-                  var filePath = await Record().stop(); //Record file
+                var filePath = await Record().stop(); //Record file
 
-                  setState(() {
-                    isLocked = false;
+                setState(() {
+                  isLocked = false;
 
-                    widget.onRecordEnd(filePath!);
-                  });
-                },
-                child: const AbsorbPointer(
-                  child: Center(
-                    child: FaIcon(
-                      FontAwesomeIcons.check,
-                      size: 18,
-                      color: Colors.green,
-                    ),
+                  widget.onRecordEnd(filePath!);
+                });
+              },
+              child: const AbsorbPointer(
+                child: Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.check,
+                    size: 18,
+                    color: Colors.green,
                   ),
                 ),
               ),
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () async {
-                  log("Cancelled recording");
-                  Vibrate.feedback(FeedbackType.heavy);
-
-                  timer?.cancel();
-                  timer = null;
-                  startTime = null;
-                  recordDuration = "00:00";
-                  setState(() {
-                    isLocked = false;
-                    showLottie = true;
-                  });
-                  widget.onCancelRecord();
-
-                  Timer(const Duration(milliseconds: 1440), () async {
-                    widget.controller.reverse();
-                    debugPrint("Cancelled recording");
-                    var filePath = await record!.stop();
-
-                    File(filePath!).delete();
-
-                    showLottie = false;
-                  });
-                },
-                child: const FaIcon(
-                  FontAwesomeIcons.xmark,
-                  size: 18,
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
