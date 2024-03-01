@@ -256,7 +256,7 @@ class _RecordButtonState extends State<RecordButton> {
               behavior: HitTestBehavior.translucent,
               onTap: () async {
                 log("Cancelled recording");
-                if (!Platform.isWindows) Vibrate.feedback(FeedbackType.heavy);
+                Vibrate.feedback(FeedbackType.heavy);
 
                 timer?.cancel();
                 timer = null;
@@ -304,13 +304,13 @@ class _RecordButtonState extends State<RecordButton> {
               behavior: HitTestBehavior.translucent,
               onTap: () async {
                 log("check recording");
-                if (!Platform.isWindows) Vibrate.feedback(FeedbackType.success);
+                Vibrate.feedback(FeedbackType.success);
                 timer?.cancel();
                 timer = null;
                 startTime = null;
                 recordDuration = "00:00";
 
-                var filePath = await record?.stop(); //Record file
+                var filePath = await AudioRecorder().stop(); //Record file
 
                 setState(() {
                   isLocked = false;
@@ -360,7 +360,7 @@ class _RecordButtonState extends State<RecordButton> {
         debugPrint("onLongPressEnd");
 
         if (isCancelled(details.localPosition, context)) {
-          if (!Platform.isWindows) Vibrate.feedback(FeedbackType.heavy);
+          Vibrate.feedback(FeedbackType.heavy);
 
           timer?.cancel();
           timer = null;
@@ -374,7 +374,7 @@ class _RecordButtonState extends State<RecordButton> {
           Timer(const Duration(milliseconds: 1440), () async {
             widget.controller.reverse();
             debugPrint("Cancelled recording");
-            var filePath = await record?.stop() ?? "";
+            var filePath = await record!.stop();
 
             File(filePath!).delete();
 
@@ -382,7 +382,8 @@ class _RecordButtonState extends State<RecordButton> {
           });
         } else if (checkIsLocked(details.localPosition)) {
           widget.controller.reverse();
-          if (!Platform.isWindows) Vibrate.feedback(FeedbackType.heavy);
+
+          Vibrate.feedback(FeedbackType.heavy);
           debugPrint("Locked recording");
           debugPrint(details.localPosition.dy.toString());
           setState(() {
@@ -391,13 +392,14 @@ class _RecordButtonState extends State<RecordButton> {
           widget.onRecordStart();
         } else {
           widget.controller.reverse();
-          if (!Platform.isWindows) Vibrate.feedback(FeedbackType.success);
+
+          Vibrate.feedback(FeedbackType.success);
 
           timer?.cancel();
           timer = null;
           startTime = null;
           recordDuration = "00:00";
-          var filePath = await record?.stop() ?? "";
+          var filePath = await record!.stop();
           // print("fuad");
           if (widget.releaseToSend!) {
             widget.onRecordEnd(filePath!);
@@ -412,17 +414,18 @@ class _RecordButtonState extends State<RecordButton> {
       },
       onLongPress: () async {
         debugPrint("onLongPress");
-        if (!Platform.isWindows) Vibrate.feedback(FeedbackType.success);
-        final hasPermission =
-            Platform.isWindows ? true : await AudioRecorder().hasPermission();
-        debugPrint("hasPermission $hasPermission");
-        if (hasPermission) {
+        Vibrate.feedback(FeedbackType.success);
+        if (await AudioRecorder().hasPermission()) {
           record = AudioRecorder();
-          final pathFileAudio =
-              "${SocialMediaFilePath.documentPath}audio_${DateTime.now().millisecondsSinceEpoch}.m4a";
-          debugPrint("pathFileAudio $pathFileAudio");
-
-          await record?.start(const RecordConfig(), path: pathFileAudio);
+          await record!.start(
+            const RecordConfig(
+              encoder: AudioEncoder.aacLc,
+              bitRate: 128000,
+              // samplingRate: 44100,
+            ),
+            path:
+                "${SocialMediaFilePath.documentPath}audio_${DateTime.now().millisecondsSinceEpoch}.acc",
+          );
           startTime = DateTime.now();
           timer = Timer.periodic(const Duration(seconds: 1), (_) {
             final minDur = DateTime.now().difference(startTime!).inMinutes;

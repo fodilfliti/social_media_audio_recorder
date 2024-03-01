@@ -69,10 +69,18 @@ class _ExampleState extends State<Example> with SingleTickerProviderStateMixin {
                 ? Expanded(
                     child: Column(
                       children: [
-                        VoiceMessage(
-                          audioSrc: filepath,
-                          me: true,
-                        ),
+                        Text(filepath)
+                        // VoiceMessageView(
+                        //   controller: VoiceController(
+                        //     audioSrc: filepath,
+                        //     maxDuration: Duration(seconds: 60),
+                        //     isFile: true,
+                        //     onComplete: () {},
+                        //     onPause: () {},
+                        //     onPlaying: () {},
+                        //     onError: (err) {},
+                        //   ),
+                        // ),
                       ],
                     ),
                   )

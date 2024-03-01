@@ -76,7 +76,7 @@
 //   DateTime? startTime;
 //   Timer? timer;
 //   String recordDuration = "00:00";
-//   AudioRecorder? record;
+//   Record? record;
 
 //   bool isLocked = false;
 //   bool showLottie = false;
@@ -256,7 +256,7 @@
 //               behavior: HitTestBehavior.translucent,
 //               onTap: () async {
 //                 log("Cancelled recording");
-//                 Vibrate.feedback(FeedbackType.heavy);
+//                 if (!Platform.isWindows) Vibrate.feedback(FeedbackType.heavy);
 
 //                 timer?.cancel();
 //                 timer = null;
@@ -304,13 +304,13 @@
 //               behavior: HitTestBehavior.translucent,
 //               onTap: () async {
 //                 log("check recording");
-//                 Vibrate.feedback(FeedbackType.success);
+//                 if (!Platform.isWindows) Vibrate.feedback(FeedbackType.success);
 //                 timer?.cancel();
 //                 timer = null;
 //                 startTime = null;
 //                 recordDuration = "00:00";
 
-//                 var filePath = await AudioRecorder().stop(); //Record file
+//                 var filePath = await Record().stop(); //Record file
 
 //                 setState(() {
 //                   isLocked = false;
@@ -360,7 +360,7 @@
 //         debugPrint("onLongPressEnd");
 
 //         if (isCancelled(details.localPosition, context)) {
-//           Vibrate.feedback(FeedbackType.heavy);
+//           if (!Platform.isWindows) Vibrate.feedback(FeedbackType.heavy);
 
 //           timer?.cancel();
 //           timer = null;
@@ -382,8 +382,7 @@
 //           });
 //         } else if (checkIsLocked(details.localPosition)) {
 //           widget.controller.reverse();
-
-//           Vibrate.feedback(FeedbackType.heavy);
+//           if (!Platform.isWindows) Vibrate.feedback(FeedbackType.heavy);
 //           debugPrint("Locked recording");
 //           debugPrint(details.localPosition.dy.toString());
 //           setState(() {
@@ -392,8 +391,7 @@
 //           widget.onRecordStart();
 //         } else {
 //           widget.controller.reverse();
-
-//           Vibrate.feedback(FeedbackType.success);
+//           if (!Platform.isWindows) Vibrate.feedback(FeedbackType.success);
 
 //           timer?.cancel();
 //           timer = null;
@@ -414,17 +412,15 @@
 //       },
 //       onLongPress: () async {
 //         debugPrint("onLongPress");
-//         Vibrate.feedback(FeedbackType.success);
-//         if (await AudioRecorder().hasPermission()) {
-//           record = AudioRecorder();
+//         if (!Platform.isWindows) Vibrate.feedback(FeedbackType.success);
+//         if (await Record().hasPermission()) {
+//           record = Record();
 //           await record!.start(
-//             const RecordConfig(
-//               encoder: AudioEncoder.aacLc,
-//               bitRate: 128000,
-//               // samplingRate: 44100,
-//             ),
 //             path:
 //                 "${SocialMediaFilePath.documentPath}audio_${DateTime.now().millisecondsSinceEpoch}.acc",
+//             encoder: AudioEncoder.aacLc,
+//             bitRate: 128000,
+//             samplingRate: 44100,
 //           );
 //           startTime = DateTime.now();
 //           timer = Timer.periodic(const Duration(seconds: 1), (_) {
