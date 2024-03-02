@@ -116,7 +116,7 @@ class _ExampleState extends State<Example> with SingleTickerProviderStateMixin {
                   controller: controller!,
                   arrowColor: Colors.white,
                   releaseToSend: true,
-                  onRecordEnd: (String value) {
+                  onRecordEnd: (String value, double dur) {
                     setState(() {
                       filepath = value;
                       readOnly = false;

@@ -38,7 +38,7 @@ class RecordButton extends StatefulWidget {
   final double? fontSize;
   final String? sliderText;
   final String? stopText;
-  final Function(String value) onRecordEnd;
+  final Function(String value, double durationParSec) onRecordEnd;
   final Function onRecordStart;
   final Function onCancelRecord;
   const RecordButton({
@@ -305,6 +305,9 @@ class _RecordButtonState extends State<RecordButton> {
               onTap: () async {
                 log("check recording");
                 if (!Platform.isWindows) Vibrate.feedback(FeedbackType.success);
+                final secDur =
+                    DateTime.now().difference(startTime!).inSeconds % 60;
+
                 timer?.cancel();
                 timer = null;
                 startTime = null;
@@ -315,7 +318,7 @@ class _RecordButtonState extends State<RecordButton> {
                 setState(() {
                   isLocked = false;
 
-                  widget.onRecordEnd(filePath!);
+                  widget.onRecordEnd(filePath!, secDur.toDouble());
                 });
               },
               child: const AbsorbPointer(
@@ -392,6 +395,7 @@ class _RecordButtonState extends State<RecordButton> {
         } else {
           widget.controller.reverse();
           if (!Platform.isWindows) Vibrate.feedback(FeedbackType.success);
+          final secDur = DateTime.now().difference(startTime!).inSeconds % 60;
 
           timer?.cancel();
           timer = null;
@@ -400,7 +404,7 @@ class _RecordButtonState extends State<RecordButton> {
           var filePath = await record?.stop() ?? "";
           // print("fuad");
           if (widget.releaseToSend!) {
-            widget.onRecordEnd(filePath!);
+            widget.onRecordEnd(filePath!, secDur.toDouble());
           } else {
             widget.onCancelRecord();
           }
