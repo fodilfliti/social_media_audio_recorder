@@ -59,7 +59,7 @@ class _ExampleState extends State<Example> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -114,6 +114,7 @@ class _ExampleState extends State<Example> with SingleTickerProviderStateMixin {
                   color: Colors.black,
                   allTextColor: Colors.white,
                   controller: controller!,
+                  onlyReleaseButton: false,
                   arrowColor: Colors.white,
                   releaseToSend: true,
                   onRecordEnd: (String value, double dur) {

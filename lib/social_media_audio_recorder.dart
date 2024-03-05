@@ -30,6 +30,7 @@ class RecordButton extends StatefulWidget {
   final double? size;
   final double? radius;
   final bool? releaseToSend;
+  final bool? onlyReleaseButton;
   final Color? color;
   final Color? allTextColor;
   final Color? arrowColor;
@@ -45,6 +46,7 @@ class RecordButton extends StatefulWidget {
     Key? key,
     required this.controller,
     this.releaseToSend = false,
+    this.onlyReleaseButton = false,
     this.timerWidth,
     this.lockerHeight = 200,
     this.size = 55,
@@ -131,8 +133,10 @@ class _RecordButtonState extends State<RecordButton> {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        lockSlider(),
-        cancelSlider(),
+        if (!widget.onlyReleaseButton!) ...[
+          lockSlider(),
+          cancelSlider(),
+        ],
         audioButton(),
         if (isLocked) timerLocked(),
       ],
@@ -188,7 +192,9 @@ class _RecordButtonState extends State<RecordButton> {
 
   Widget cancelSlider() {
     return Positioned(
-      right: -timerAnimation!.value,
+      right: timerAnimation!.value == timerWidth + 8
+          ? MediaQuery.of(context).size.width
+          : -timerAnimation!.value,
       child: Container(
         height: widget.size!,
         width: timerWidth,
