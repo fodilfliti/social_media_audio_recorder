@@ -429,10 +429,11 @@ class _RecordButtonState extends State<RecordButton> {
         if (hasPermission) {
           record = AudioRecorder();
           final pathFileAudio =
-              "${SocialMediaFilePath.documentPath}audio_${DateTime.now().millisecondsSinceEpoch}.m4a";
+              "${SocialMediaFilePath.documentPath}audio_${DateTime.now().millisecondsSinceEpoch}.wav";
           debugPrint("pathFileAudio $pathFileAudio");
 
-          await record?.start(const RecordConfig(), path: pathFileAudio);
+          await record?.start(const RecordConfig(encoder: AudioEncoder.wav),
+              path: pathFileAudio);
           startTime = DateTime.now();
           timer = Timer.periodic(const Duration(seconds: 1), (_) {
             final minDur = DateTime.now().difference(startTime!).inMinutes;
