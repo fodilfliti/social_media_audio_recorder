@@ -138,7 +138,7 @@ class _RecordButtonState extends State<RecordButton> {
           cancelSlider(),
         ],
         audioButton(),
-        if (isLocked) timerLocked(),
+        if (isLocked && !widget.onlyReleaseButton!) timerLocked(),
       ],
     );
   }
@@ -368,7 +368,8 @@ class _RecordButtonState extends State<RecordButton> {
       onLongPressEnd: (details) async {
         debugPrint("onLongPressEnd");
 
-        if (isCancelled(details.localPosition, context)) {
+        if (isCancelled(details.localPosition, context) &&
+            !widget.onlyReleaseButton!) {
           if (!Platform.isWindows) Vibrate.feedback(FeedbackType.heavy);
 
           timer?.cancel();
@@ -389,7 +390,8 @@ class _RecordButtonState extends State<RecordButton> {
 
             showLottie = false;
           });
-        } else if (checkIsLocked(details.localPosition)) {
+        } else if (checkIsLocked(details.localPosition) &&
+            !widget.onlyReleaseButton!) {
           widget.controller.reverse();
           if (!Platform.isWindows) Vibrate.feedback(FeedbackType.heavy);
           debugPrint("Locked recording");
