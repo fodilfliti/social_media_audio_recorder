@@ -169,11 +169,11 @@ class _RecordButtonState extends State<RecordButton> {
                               color: widget.recordBgColor ??
                                   Theme.of(context).primaryColor,
                             ),
-                            child: const Center(
+                            child: Center(
                                 child: FaIcon(
                               FontAwesomeIcons.xmark,
                               size: 18,
-                              color: Colors.white,
+                              color: widget.recordButtonColor ?? Colors.black,
                             ))),
                       ),
                     ),
@@ -197,7 +197,7 @@ class _RecordButtonState extends State<RecordButton> {
                                   ? FontAwesomeIcons.pause
                                   : FontAwesomeIcons.play,
                               size: 18,
-                              color: Colors.white,
+                              color: widget.recordButtonColor ?? Colors.black,
                             )),
                           ),
                         )),
@@ -215,11 +215,11 @@ class _RecordButtonState extends State<RecordButton> {
                                 color: widget.recordBgColor ??
                                     Theme.of(context).primaryColor,
                               ),
-                              child: const Center(
+                              child: Center(
                                   child: FaIcon(
                                 FontAwesomeIcons.check,
                                 size: 18,
-                                color: Colors.white,
+                                color: widget.recordButtonColor ?? Colors.black,
                               ))),
                         )),
                   ],
@@ -353,10 +353,10 @@ class _RecordButtonState extends State<RecordButton> {
     );
   }
 
-  Text recordDurationWidget() {
+  Text recordDurationWidget({Color? color}) {
     return Text(recordDuration,
         style: TextStyle(
-          color: widget.allTextColor ?? Colors.black,
+          color: color ?? widget.allTextColor ?? Colors.black,
           fontSize: widget.fontSize,
           decoration: TextDecoration.none,
         ));
@@ -496,7 +496,9 @@ class _RecordButtonState extends State<RecordButton> {
             color: widget.recordBgColor ?? Theme.of(context).primaryColor,
           ),
           child: widget.onlyReleaseButton! && timer != null
-              ? Center(child: recordDurationWidget())
+              ? Center(
+                  child: recordDurationWidget(
+                      color: widget.recordButtonColor ?? Colors.black))
               : Icon(
                   Icons.mic,
                   color: widget.recordButtonColor ?? Colors.black,
@@ -604,131 +606,5 @@ class _RecordButtonState extends State<RecordButton> {
 
   bool isCancelled(Offset offset, BuildContext context) {
     return (offset.dx < -(MediaQuery.of(context).size.width * 0.2));
-  }
-}
-
-class MultiHitStack extends Stack {
-  MultiHitStack({
-    super.key,
-    super.alignment = AlignmentDirectional.topStart,
-    super.textDirection,
-    super.fit = StackFit.loose,
-    super.clipBehavior = Clip.hardEdge,
-    super.children = const <Widget>[],
-  });
-
-  @override
-  RenderMultiHitStack createRenderObject(BuildContext context) {
-    return RenderMultiHitStack(
-      alignment: alignment,
-      textDirection: textDirection ?? Directionality.maybeOf(context),
-      fit: fit,
-      clipBehavior: clipBehavior,
-    );
-  }
-
-  @override
-  void updateRenderObject(
-      BuildContext context, RenderMultiHitStack renderObject) {
-    renderObject
-      ..alignment = alignment
-      ..textDirection = textDirection ?? Directionality.maybeOf(context)
-      ..fit = fit
-      ..clipBehavior = clipBehavior;
-  }
-}
-
-class RenderMultiHitStack extends RenderStack {
-  RenderMultiHitStack({
-    super.children,
-    super.alignment = AlignmentDirectional.topStart,
-    super.textDirection,
-    super.fit = StackFit.loose,
-    super.clipBehavior = Clip.hardEdge,
-  });
-
-  // NOTE MODIFIED FROM [RenderStack.hitTestChildren], i.e. [defaultHitTestChildren]
-  @override
-  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
-    // NOTE MODIFIED
-    var childHit = false;
-
-    RenderBox? child = lastChild;
-    while (child != null) {
-      // The x, y parameters have the top left of the node's box as the origin.
-      final StackParentData childParentData =
-          child.parentData! as StackParentData;
-      final bool isHit = result.addWithPaintOffset(
-        offset: childParentData.offset,
-        position: position,
-        hitTest: (BoxHitTestResult result, Offset transformed) {
-          assert(transformed == position - childParentData.offset);
-          return child!.hitTest(result, position: transformed);
-        },
-      );
-
-      // NOTE MODIFIED
-      // if (isHit) return true;
-      childHit |= isHit;
-
-      child = childParentData.previousSibling;
-    }
-
-    // NOTE MODIFIED
-    return childHit;
-    // return false;
-  }
-}
-
-class CustomStack extends Stack {
-  CustomStack({children, clipBehavior})
-      : super(children: children, clipBehavior: clipBehavior);
-
-  @override
-  CustomRenderStack createRenderObject(BuildContext context) {
-    return CustomRenderStack(
-        alignment: alignment,
-        textDirection: textDirection ?? Directionality.of(context),
-        fit: fit,
-        clipBehavior: clipBehavior
-        // overflow: overflow,
-        );
-  }
-}
-
-class CustomRenderStack extends RenderStack {
-  CustomRenderStack({alignment, textDirection, fit, overflow, clipBehavior})
-      : super(
-            alignment: alignment,
-            textDirection: textDirection,
-            fit: fit,
-            clipBehavior: clipBehavior
-            //overflow: overflow
-            );
-
-  @override
-  bool hitTestChildren(BoxHitTestResult result,
-      {Offset position = Offset.zero}) {
-    var stackHit = false;
-
-    final children = getChildrenAsList();
-
-    for (var child in children) {
-      final StackParentData childParentData =
-          child.parentData! as StackParentData;
-
-      final childHit = result.addWithPaintOffset(
-        offset: childParentData?.offset ?? Offset.zero,
-        position: position,
-        hitTest: (BoxHitTestResult result, Offset transformed) {
-          assert(transformed == position - childParentData.offset);
-          return child.hitTest(result, position: transformed);
-        },
-      );
-
-      if (childHit) stackHit = true;
-    }
-
-    return stackHit;
   }
 }
