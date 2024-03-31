@@ -568,6 +568,8 @@ class _RecordButtonState extends State<RecordButton> {
         Platform.isWindows ? true : await AudioRecorder().hasPermission();
     debugPrint("hasPermission $hasPermission");
     if (hasPermission && timer == null) {
+      widget.onRecordStart();
+
       record = AudioRecorder();
       final pathFileAudio =
           "${SocialMediaFilePath.documentPath}audio_${DateTime.now().millisecondsSinceEpoch}.wav";
@@ -595,8 +597,6 @@ class _RecordButtonState extends State<RecordButton> {
           });
         }
       });
-
-      widget.onRecordStart();
     }
   }
 
