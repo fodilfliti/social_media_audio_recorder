@@ -596,7 +596,7 @@ class _RecordButtonState extends State<RecordButton> {
         }
       });
 
-      // widget.onRecordStart();
+      widget.onRecordStart();
     }
   }
 
