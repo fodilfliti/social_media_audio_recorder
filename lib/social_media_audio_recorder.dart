@@ -143,14 +143,16 @@ class _RecordButtonState extends State<RecordButton> {
             lockSlider(),
             cancelSlider(),
           ],
-          SizedBox(
-              width: size,
-              height: size,
-              child: Align(
-                  alignment: widget.direction == TextDirection.ltr
-                      ? Alignment.bottomRight
-                      : Alignment.bottomLeft,
-                  child: audioButton())),
+          widget.onlyReleaseButton!
+              ? SizedBox(
+                  width: size,
+                  height: size,
+                  child: Align(
+                      alignment: widget.direction == TextDirection.ltr
+                          ? Alignment.bottomRight
+                          : Alignment.bottomLeft,
+                      child: audioButton()))
+              : audioButton(),
           if (isLocked)
             ...!widget.onlyReleaseButton!
                 ? [timerLocked()]
@@ -276,56 +278,58 @@ class _RecordButtonState extends State<RecordButton> {
   }
 
   Widget cancelSlider() {
-    return Positioned(
-      right: timerAnimation!.value == timerWidth + 8
-          ? MediaQuery.of(context).size.width
-          : -timerAnimation!.value,
-      child: Container(
-        height: widget.size!,
-        width: timerWidth,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(widget.radius!),
-          color: widget.color,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              showLottie
-                  ? const LottieAnimation()
-                  : Text(recordDuration,
-                      style: TextStyle(
-                        color: widget.allTextColor ?? Colors.black,
-                        fontSize: widget.fontSize,
-                        decoration: TextDecoration.none,
-                      )),
-              SizedBox(width: widget.size!),
-              FlowShader(
-                duration: const Duration(seconds: 3),
-                flowColors: const [Colors.white, Colors.grey],
+    return timerAnimation!.value == timerWidth + 8
+        ? const SizedBox()
+        : Positioned(
+            right: timerAnimation!.value == timerWidth + 8
+                ? MediaQuery.of(context).size.width
+                : -timerAnimation!.value,
+            child: Container(
+              height: widget.size!,
+              width: timerWidth,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(widget.radius!),
+                color: widget.color,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    Icon(Icons.keyboard_arrow_left,
-                        color: widget.allTextColor ?? Colors.black),
-                    Text(
-                      widget.sliderText ?? "Slide to cancel",
-                      style: TextStyle(
-                        color: widget.allTextColor ?? Colors.black,
-                        fontSize: widget.fontSize,
-                        decoration: TextDecoration.none,
+                    showLottie
+                        ? const LottieAnimation()
+                        : Text(recordDuration,
+                            style: TextStyle(
+                              color: widget.allTextColor ?? Colors.black,
+                              fontSize: widget.fontSize,
+                              decoration: TextDecoration.none,
+                            )),
+                    SizedBox(width: widget.size!),
+                    FlowShader(
+                      duration: const Duration(seconds: 3),
+                      flowColors: const [Colors.white, Colors.grey],
+                      child: Row(
+                        children: [
+                          Icon(Icons.keyboard_arrow_left,
+                              color: widget.allTextColor ?? Colors.black),
+                          Text(
+                            widget.sliderText ?? "Slide to cancel",
+                            style: TextStyle(
+                              color: widget.allTextColor ?? Colors.black,
+                              fontSize: widget.fontSize,
+                              decoration: TextDecoration.none,
+                            ),
+                          )
+                        ],
                       ),
-                    )
+                    ),
+                    SizedBox(width: widget.size!),
                   ],
                 ),
               ),
-              SizedBox(width: widget.size!),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
   }
 
   Widget timerLocked() {
@@ -366,10 +370,13 @@ class _RecordButtonState extends State<RecordButton> {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: stopRecordF,
-      child: FaIcon(
-        FontAwesomeIcons.xmark,
-        size: 18,
-        color: widget.onlyReleaseButton! ? Colors.white : Colors.red,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: FaIcon(
+          FontAwesomeIcons.xmark,
+          size: 18,
+          color: widget.onlyReleaseButton! ? Colors.white : Colors.red,
+        ),
       ),
     );
   }
@@ -405,12 +412,15 @@ class _RecordButtonState extends State<RecordButton> {
       onTap: pauseRecordF,
       child: AbsorbPointer(
         child: Center(
-          child: FaIcon(
-            !isPause ? FontAwesomeIcons.pause : FontAwesomeIcons.play,
-            size: 18,
-            color: widget.onlyReleaseButton!
-                ? Colors.white
-                : widget.allTextColor ?? Colors.black,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FaIcon(
+              !isPause ? FontAwesomeIcons.pause : FontAwesomeIcons.play,
+              size: 18,
+              color: widget.onlyReleaseButton!
+                  ? Colors.white
+                  : widget.allTextColor ?? Colors.black,
+            ),
           ),
         ),
       ),
@@ -434,10 +444,13 @@ class _RecordButtonState extends State<RecordButton> {
       onTap: saveRecordF,
       child: AbsorbPointer(
         child: Center(
-          child: FaIcon(
-            FontAwesomeIcons.check,
-            size: 18,
-            color: widget.onlyReleaseButton! ? Colors.white : Colors.green,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FaIcon(
+              FontAwesomeIcons.check,
+              size: 18,
+              color: widget.onlyReleaseButton! ? Colors.white : Colors.green,
+            ),
           ),
         ),
       ),

@@ -114,10 +114,10 @@ class _ExampleState extends State<Example> with SingleTickerProviderStateMixin {
                   color: Colors.black,
                   allTextColor: Colors.white,
                   controller: controller!,
-                  onlyReleaseButton: true,
+                  onlyReleaseButton: false,
                   arrowColor: Colors.white,
                   releaseToSend: true,
-                  direction: TextDirection.rtl,
+                  // direction: TextDirection.rtl,
                   onRecordEnd: (String value, double dur) {
                     setState(() {
                       filepath = value;
